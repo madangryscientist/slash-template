@@ -19,11 +19,17 @@ A change is ready when all of these pass from a fresh checkout:
 ```bash
 bun install
 bun run typecheck       # tsc, strict, on every project
-bun run lint            # oxlint (type-aware, --deny-warnings), check-slop, clippy, check-dashes
-bun run format:check    # oxfmt (and cargo fmt); `bun run format` fixes it
-bun run test            # Vitest under Bun (and cargo test)
+bun run lint            # oxlint (type-aware, --deny-warnings), check-slop, check-dashes
+bun run format:check    # oxfmt; `bun run format` fixes it
+bun run test            # Vitest under Bun
 bun run build
 ```
+
+<!-- template:begin rust -->
+For the Rust crates, `lint` also runs clippy, `format:check` runs `cargo fmt --check` (`cargo fmt`
+fixes it) and `test` runs `cargo test`.
+
+<!-- template:end rust -->
 
 Lint rules are errors: fix the code, do not disable a rule.
 

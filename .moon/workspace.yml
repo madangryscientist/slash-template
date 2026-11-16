@@ -1,5 +1,5 @@
 # moon workspace. Projects are listed, not globbed, and keep their directory's short name, so
-# `bunx moon run engine:test` runs the engine's tests. Each engine is one project, tagged with its
+# `bunx moon run scripts:lint` lints the scripts. Each engine is one project, tagged with its
 # language (`ts`, `rust`), and inherits that tag's tasks from `.moon/tasks/<tag>.yml`.
 #
 # No toolchain is declared (no .moon/toolchains.yml): every task runs on the `system` toolchain, so

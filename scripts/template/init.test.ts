@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { checkProduct } from "./check.ts";
+import { listFiles } from "./files.ts";
 import { type Engine, type Licence, UsageError, parseOptions } from "./options.ts";
 
 const templateRoot = join(import.meta.dirname, "..", "..");
@@ -30,10 +31,20 @@ function init(dest: string, flags: string[]) {
   return Bun.spawnSync(["bun", "scripts/init.ts", ...flags], { cwd: dest });
 }
 
-const engineSets: Engine[][] = [["ts"], ["rust"], ["ts", "rust"]];
-const combinations = (["mit", "elastic"] as Licence[]).flatMap((licence) =>
-  engineSets.flatMap((engines) => [false, true].map((web) => ({ licence, engines, web }))),
-);
+// The CI init matrix runs all 12 choices with each product's gate. These three cover the
+// different shapes (npm CLI, Rust CLI with web pulling the engine in, both engines) and both licences.
+const combinations: { licence: Licence; engines: Engine[]; web: boolean }[] = [
+  { licence: "mit", engines: ["ts"], web: false },
+  { licence: "elastic", engines: ["rust"], web: true },
+  { licence: "mit", engines: ["ts", "rust"], web: true },
+];
+
+/** Every file under `dir` with its contents, to show a run changed nothing. */
+function snapshot(dir: string): Record<string, string> {
+  return Object.fromEntries(
+    listFiles(dir).map((path) => [path, readFileSync(join(dir, path), "utf8")]),
+  );
+}
 
 describe("init", () => {
   it.each(combinations)("makes a right product for %o", ({ licence, engines, web }) => {
@@ -76,15 +87,11 @@ describe("init", () => {
 
   it("refuses a usage error with exit 2 and changes nothing", () => {
     const dest = copyTemplate();
+    const before = snapshot(dest);
     const run = init(dest, ["--name", "taskslash", "--licence", "mit", "--engine", "ts"]);
     expect(run.exitCode).toBe(2);
     expect(run.stderr.toString()).toContain("PascalCase");
-    expect(
-      checkProduct(
-        dest,
-        parseOptions(["--name", "TaskSlash", "--licence", "mit", "--engine", "ts"]),
-      ),
-    ).not.toEqual([]);
+    expect(snapshot(dest)).toEqual(before);
   });
 });
 

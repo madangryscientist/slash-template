@@ -74,7 +74,7 @@ credentials needed). First time on a machine: `(cd apps/web && bunx playwright i
 chromium-headless-shell)`. `ui-review.yml` checks the UI is built the Hack Cove way.
 
 <!-- template:end web -->
-One project: `bunx moon run engine:test`. moon caches in `.moon/cache` (gitignored); add `--force` to
+One project: `bunx moon run scripts:typecheck`. moon caches in `.moon/cache` (gitignored); add `--force` to
 rerun a cached task. A shared moon remote cache sits behind a bearer token read from
 `MOON_REMOTE_TOKEN`; unset, moon warns about a 401 and runs on the local cache, so CI passes with no
 secret. Lint rules are all errors; fix the code, do not disable a rule. A TODO carries an issue:

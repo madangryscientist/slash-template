@@ -62,8 +62,8 @@ bun run build                     # moon run :build
 <!-- template:begin rust -->
 For the crates, `lint` is `cargo clippy --all-targets -- -D warnings`, `test` is `cargo test` and
 `build` is `cargo build`, all `--locked`; `format:check` also runs `moon run :format-check`
-(`cargo fmt --check`, and `cargo fmt` fixes it). rustup installs the toolchain `rust-toolchain.toml`
-pins on the first cargo call.
+(`cargo fmt --check`, and `cargo fmt` fixes it). On a new machine run `rustup toolchain install`
+first: it installs the toolchain `rust-toolchain.toml` pins (the `gate` job does the same).
 
 <!-- template:end rust -->
 <!-- template:begin web -->

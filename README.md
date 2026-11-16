@@ -95,7 +95,8 @@ bun run test:e2e
 
 <!-- template:begin rust -->
 The Rust crates need [rustup](https://rustup.rs): `rust-toolchain.toml` pins the toolchain, and
-rustup installs it on the first cargo call. There is no release workflow for the binary yet.
+`rustup toolchain install` installs it, once per machine. There is no release workflow for the
+binary yet.
 
 <!-- template:end rust -->
 See [`AGENTS.md`](AGENTS.md) for the full gate and [`CONTRIBUTING.md`](CONTRIBUTING.md) for how to

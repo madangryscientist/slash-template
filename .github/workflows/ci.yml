@@ -47,6 +47,11 @@ jobs:
         with:
           bun-version-file: .tool-versions
       - run: bun scripts/check-workflows.ts .github/workflows/*.yml
+      # template:begin rust
+      # moon runs the cargo tasks in parallel, and on a fresh runner each would install the toolchain
+      # rust-toolchain.toml pins at once and collide. Install it once first.
+      - run: rustup toolchain install
+      # template:end rust
       - run: bun install --frozen-lockfile
       - run: bun run typecheck
         env: &moon-remote-token
@@ -192,6 +197,9 @@ jobs:
           test ! -e licences
           if grep -n "scripts/init.ts" .github/workflows/ci.yml; then exit 1; fi
       - run: bun install
+      - name: Install the pinned Rust toolchain once, before moon runs cargo in parallel
+        if: contains(matrix.engines, 'rust')
+        run: rustup toolchain install
       - name: The product matches its flags
         # shellcheck disable=SC2086
         run: bun "$GITHUB_WORKSPACE/scripts/template/assert.ts" . $FLAGS

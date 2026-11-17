@@ -10,7 +10,7 @@ function Home() {
   return (
     <AppShell>
       <ListLayout title="SlashProduct">
-        <Text as="p">{greet("world")}</Text>
+        <Text>{greet("world")}</Text>
       </ListLayout>
     </AppShell>
   );

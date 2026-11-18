@@ -10,7 +10,7 @@ secrets. Everything below the line is the README the product starts with.
 ## Create a product
 
 ```bash
-gh repo create madangryscientist/<name> --private --template madangryscientist/slash-template --clone
+gh repo create slashsuite/<name> --private --template slashsuite/slash-template --clone
 cd <name>
 bun scripts/init.ts --name <Name> --licence mit|elastic --engine ts|rust [--engine ...] [--web]
 bun install                      # writes bun.lock for the parts you kept

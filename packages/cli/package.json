@@ -5,7 +5,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/madangryscientist/slashproduct.git",
+    "url": "git+https://github.com/slashsuite/slashproduct.git",
     "directory": "packages/cli"
   },
   "bin": {

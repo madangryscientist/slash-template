@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// Lockdown check for the `proxmox` self-hosted runner.
+// Lockdown check for self-hosted runners (`proxmox`, `desktop`, `self-hosted`).
 //
 // Usage: bun check-workflows.ts <file.yml>...   (register.sh feeds it a repo's workflows)
 //
@@ -57,6 +57,14 @@ function reachesRunner(runsOn: unknown): boolean {
   );
 }
 
+// The `runs-on` of a job as written: a string as is, an array as `[a, b]`, an object as JSON.
+function renderRunsOn(runsOn: unknown): string {
+  if (typeof runsOn === "string") return runsOn.replace(/\s+/g, " ").trim();
+  if (Array.isArray(runsOn))
+    return `[${runsOn.map((item) => (typeof item === "string" ? item : JSON.stringify(item))).join(", ")}]`;
+  return JSON.stringify(runsOn);
+}
+
 function guarded(cond: unknown): boolean {
   const c = (typeof cond === "string" ? cond : "")
     .replace(/^\s*\$\{\{|\}\}\s*$/g, "")
@@ -65,37 +73,41 @@ function guarded(cond: unknown): boolean {
   return c === GUARD || c.startsWith(`(${GUARD}) && `);
 }
 
-function checkWorkflow(name: string, text: string): string[] {
+function checkWorkflow(name: string, text: string): { failures: string[]; reached: number } {
   const wf = parseWorkflow(text);
   const failures: string[] = [];
+  let reached = 0;
   const on = triggers(wf.on);
   for (const [id, job] of Object.entries(wf.jobs)) {
     if (!reachesRunner(job.runsOn)) continue;
+    reached++;
+    const runsOn = renderRunsOn(job.runsOn);
     const bad = on.filter((t) => !ALLOWED.has(t));
     if (bad.length)
       failures.push(
-        `${name}: job ${id} runs on proxmox but the workflow triggers on ${bad.join(", ")}`,
+        `${name}: job ${id} runs on ${runsOn} but the workflow triggers on ${bad.join(", ")}`,
       );
     if (!guarded(job.if))
       failures.push(
-        `${name}: job ${id} runs on proxmox without exactly the same-repo guard: ${GUARD}`,
+        `${name}: job ${id} runs on ${runsOn} without exactly the same-repo guard: ${GUARD}`,
       );
   }
-  return failures;
+  return { failures, reached };
 }
 
 if (import.meta.main) {
   const files = Bun.argv.slice(2);
   const failures: string[] = [];
-  let named = 0;
+  let selfHosted = 0;
   for (const f of files) {
     const text = await Bun.file(f).text();
-    if (text.includes("proxmox")) named++;
-    failures.push(...checkWorkflow(basename(f), text));
+    const result = checkWorkflow(basename(f), text);
+    selfHosted += result.reached;
+    failures.push(...result.failures);
   }
   for (const line of failures) console.log(`FAIL ${line}`);
   console.log(
-    `${files.length} workflow(s) read, ${named} name proxmox, ${failures.length} failure(s)`,
+    `${files.length} workflow(s) read, ${selfHosted} self-hosted job(s), ${failures.length} failure(s)`,
   );
   process.exit(failures.length ? 1 : 0);
 }

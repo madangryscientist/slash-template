@@ -71,7 +71,7 @@ The `apps` job runs when the apps or packages change: `bunx moon run web:test-e2
 against a local production build), then `bunx moon run web:build --force` and the deploy dry run
 (`(cd apps/web && bunx wrangler deploy --dry-run --outdir "$TMPDIR/web-dry")`, no Cloudflare
 credentials needed). First time on a machine: `(cd apps/web && bunx playwright install
-chromium-headless-shell)`. `ui-review.yml` checks the UI is built the Hack Cove way.
+chromium-headless-shell)`. `ui-review.yml` checks the UI is built the UISlash way.
 
 <!-- template:end web -->
 One project: `bunx moon run scripts:typecheck`. moon caches in `.moon/cache` (gitignored); add `--force` to
@@ -110,6 +110,6 @@ hardcoded `/tmp`.
 3. **A secret is read from the environment, never from the tree.**
 <!-- template:begin web -->
 4. **UI is composed from `@hackcove/ui-react`.** A custom style or component is a flag, not a fix; a
-   reusable gap is filed against the hackcove repo. Keep the Catppuccin credit comment in each
+   reusable gap is filed against the UISlash repo. Keep the Catppuccin credit comment in each
    `styles.css`.
 <!-- template:end web -->

@@ -2,7 +2,7 @@
 # slash-template
 
 The template for a new Slash product: a Bun and moon monorepo with one or more engines (TypeScript,
-Rust, or both side by side), an optional web app on the Hack Cove stack, and CI that passes with no
+Rust, or both side by side), an optional web app built on UISlash, and CI that passes with no
 secrets. Everything below the line is the README the product starts with.
 
 > **Status: alpha.** A product made from it is alpha too: anything may break.
